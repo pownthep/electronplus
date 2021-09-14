@@ -1,0 +1,24 @@
+{
+  "name": "electronplus",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-esbuild dev",
+    "build": "electron-esbuild build",
+    "package": "electron-builder"
+  },
+  "devDependencies": {
+    "@types/node": "16.9.1",
+    "electron": "14.0.0",
+    "electron-aspect-ratio-browser-window": "^1.0.2",
+    "electron-builder": "22.11.11",
+    "electron-esbuild": "2.0.0",
+    "electron-util": "0.17.2",
+    "esbuild": "0.x",
+    "typescript": "4.4.3",
+    "node-fetch": "^3.0.0"
+  },
+  "dependencies": {
+    "xpipe": "^1.0.5"
+  }
+}

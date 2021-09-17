@@ -3,48 +3,41 @@ import AspectRatioBrowserWindow from 'electron-aspect-ratio-browser-window';
 import { access } from 'fs';
 import { promisify } from 'util';
 
+export const enum COMMON {
+  MINIMIZE = `minimizeWindow`,
+  TOGGLE_MAXIMIZE = 'toggleMaximize',
+  UNMAXIMIZE = 'unmaximize',
+  TOGGLE_PIP = 'togglePip',
+  FILE_EXIST = 'fileExist',
+  SET_AR = 'setAspectRatio',
+  SHOW_WINDOW = 'showWindow',
+  GET_IMAGE = 'getImage'
+}
+
 export default class CommonHandler {
-  public static init(ipcMain: IpcMain, mainWindow: AspectRatioBrowserWindow) {
-    ipcMain.handle('minimizeWindow', (event, ...args) => {
-      if (mainWindow) mainWindow.minimize();
-      return true;
+  public static init(
+    { handle }: IpcMain,
+    mainWindow: AspectRatioBrowserWindow
+  ) {
+    handle(COMMON.MINIMIZE, () => mainWindow?.minimize());
+    handle(COMMON.UNMAXIMIZE, () => mainWindow?.unmaximize());
+    handle(COMMON.SET_AR, (_, ratio) => mainWindow?.setAspectRatio(ratio));
+    handle(COMMON.SHOW_WINDOW, () => mainWindow?.show());
+    handle(COMMON.TOGGLE_PIP, (_, isPip) =>
+      mainWindow?.setAlwaysOnTop(isPip, 'screen-saver')
+    );
+    handle(COMMON.TOGGLE_MAXIMIZE, () => {
+      mainWindow?.isMaximized()
+        ? mainWindow.unmaximize()
+        : mainWindow.maximize();
+      return mainWindow.isMaximized();
     });
-    ipcMain.handle('toggleMaximize', (event, ...args) => {
-      if (mainWindow) {
-        if (mainWindow.isMaximized()) {
-          mainWindow.unmaximize();
-          return false;
-        }
-        mainWindow.maximize();
-        return true;
-      }
-    });
-    ipcMain.handle('unmaximize', (event, ...args) => {
-      if (mainWindow) {
-        mainWindow.unmaximize();
-      }
-    });
-    ipcMain.handle('togglePip', (event, ...args) => {
-      if (mainWindow) {
-        mainWindow.setAlwaysOnTop(args[0], 'screen-saver');
-      }
-    });
-    ipcMain.handle('fileExist', async (event, ...args) => {
+    handle(COMMON.FILE_EXIST, async (_, path) => {
       try {
-        await promisify(access)(args[0]);
+        await promisify(access)(path);
         return true;
       } catch (error) {
         return false;
-      }
-    });
-    ipcMain.handle('setAspectRatio', async (event, ...args) => {
-      if (mainWindow) {
-        mainWindow.setAspectRatio(args[0]);
-      }
-    });
-    ipcMain.handle('showWindow', (event, ...args) => {
-      if (mainWindow) {
-        mainWindow.show();
       }
     });
   }

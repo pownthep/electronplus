@@ -5,8 +5,11 @@ export default {
   platform: 'node',
   entryPoints: [
     path.resolve('src/main/main.ts'),
-    path.resolve('src/main/preload.ts')
+    path.resolve('src/main/preload.ts'),
+    path.resolve('src/main/background/torrent.ts'),
+    path.resolve('src/main/background/server.ts'),
   ],
   bundle: true,
-  target: 'node14.17.0' // electron version target
+  target: 'node12.18.3',
+  sourcemap: false
 } as BuildOptions;

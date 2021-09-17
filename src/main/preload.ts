@@ -1,19 +1,22 @@
-import { ipcRenderer, contextBridge, IpcRendererEvent } from 'electron';
+import { ipcRenderer, contextBridge } from 'electron';
+
+const { invoke, on } = ipcRenderer;
 
 contextBridge.exposeInMainWorld('electron', {
-  minimizeWindow: () => ipcRenderer.invoke('minimizeWindow'),
-  toggleMaximize: (maximize: boolean | null = null) =>
-    ipcRenderer.invoke('toggleMaximize'),
-  togglePip: (flag: boolean) => ipcRenderer.invoke('togglePip', flag),
-  fileExist: (filePath: string) => ipcRenderer.invoke('fileExist', filePath),
-  setAspectRatio: (ratio: number) =>
-    ipcRenderer.invoke('setAspectRatio', ratio),
-  unmaximize: () => ipcRenderer.invoke('unmaximize'),
-  startIPCServer: () => ipcRenderer.invoke('startIPCServer'),
-  mpv: (args: string) => ipcRenderer.invoke('mpv', args),
-  ipcOn: (
-    channel: string,
-    callback: (event: IpcRendererEvent, args: any[]) => void
-  ) => ipcRenderer.on(channel, (event, ...args) => callback(event, args)),
-  showWindow: () => ipcRenderer.invoke('showWindow')
+  minimizeWindow: () => invoke('minimize'),
+  toggleMaximize: () => invoke('toggleMaximize'),
+  togglePip: (flag: boolean) => invoke('togglePip', flag),
+  fileExist: (filePath: string) => invoke('fileExist', filePath),
+  setAspectRatio: (ratio: number) => invoke('setAspectRatio', ratio),
+  unmaximize: () => invoke('unmaximize'),
+  showWindow: () => invoke('showWindow'),
+  mpvServer: () => invoke('startServer'),
+  mpvRequest: (payload: string) => invoke('mpvRequest', payload),
+  startTorrent: (torrentId: any) => invoke('startTorrent', torrentId),
+  closeTorrent: (torrentId: any) => invoke('closeTorrent', torrentId),
+  ipcOn: on,
+  addTorrent: (torrentId: string) => invoke('add_torrent', torrentId),
+  streamTorrent: (torrentId: string) => invoke('stream_torrent', torrentId),
+  getImage: (url: string) => invoke('getImage', url),
+  serverPort: () => invoke('serverPort')
 });

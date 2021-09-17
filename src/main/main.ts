@@ -27,9 +27,12 @@ async function createMainWindow() {
       preload: path.join(app.getAppPath(), 'preload.js'),
       plugins: true,
       sandbox: true,
-      webSecurity: !isDev
+      webSecurity: !isDev,
+      nativeWindowOpen: false
     }
   });
+  // require('./background/server.js');
+  Handlers.init(ipcMain, mainWindow);
 
   mainWindow.setAspectRatio(16 / 9);
 
@@ -38,8 +41,6 @@ async function createMainWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
-  Handlers.init(ipcMain, mainWindow);
 }
 
 function getUrl() {
